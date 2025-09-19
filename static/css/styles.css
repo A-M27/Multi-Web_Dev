@@ -1,9 +1,22 @@
 body {
     font-family: Arial, sans-serif;
+<<<<<<< Updated upstream
     margin: 40px;
     background-color: #f4f4f4;
 }
 
+=======
+    margin: 20px;
+    background-color: white;
+}
+
+@media screen and (max-width: 600px){
+  body{
+    background-color: lightblue
+  }
+}
+
+>>>>>>> Stashed changes
 h1 {
     color: #333;
 }

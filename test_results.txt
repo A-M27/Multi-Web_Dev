@@ -1,0 +1,82 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-8.4.2, pluggy-1.6.0
+rootdir: /home/andyz_m/fastapi1
+plugins: asyncio-1.2.0, anyio-4.10.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 7 items
+
+tests/my_test.py F.F...F                                                 [100%]
+
+=================================== FAILURES ===================================
+________________________________ test_read_main ________________________________
+
+client = <starlette.testclient.TestClient object at 0x7cb87a1a35c0>
+
+    def test_read_main(client):
+        response = client.get("/")
+        assert response.status_code == 200
+        soup = BeautifulSoup(response.text, "html.parser")
+>       assert "Flashcard" in soup.get_text()
+E       assert 'Flashcard' in "\n\n\n\n\n \nHome - Andy's Trivia App\n\n\n\nHome\nAll Cards\nAll Sets\nUsers\nPlay Trivia\n\nWelcome to Andy's Trivia App\nRecent Cards\n\n\nQuestion: Question\nAnswer: Answer\n\n\n© 2025 Andy's Trivia App. All rights reserved.\n\n"
+E        +  where "\n\n\n\n\n \nHome - Andy's Trivia App\n\n\n\nHome\nAll Cards\nAll Sets\nUsers\nPlay Trivia\n\nWelcome to Andy's Trivia App\nRecent Cards\n\n\nQuestion: Question\nAnswer: Answer\n\n\n© 2025 Andy's Trivia App. All rights reserved.\n\n" = get_text()
+E        +    where get_text = <!DOCTYPE html>\n\n<html lang="en">\n<head>\n<meta charset="utf-8"/>\n<meta content="width=device-width, initial-scale=1.0"...Answer:</strong> Answer</p>\n</li>\n</ul>\n<footer>© 2025 Andy's Trivia App. All rights reserved.</footer>\n</body>\n</html>.get_text
+
+tests/my_test.py:47: AssertionError
+________________________________ test_get_play _________________________________
+
+client = <starlette.testclient.TestClient object at 0x7cb87a065130>
+
+    def test_get_play(client):
+        response = client.get("/play")
+        assert response.status_code == 200
+        soup = BeautifulSoup(response.text, "html.parser")
+>       assert "Andre's Random Trivia Questions" in soup.get_text()
+E       assert "Andre's Random Trivia Questions" in "\n\n\n\n\n \nPlay Trivia\n\n\n\nHome\nAll Cards\nAll Sets\nUsers\nPlay Trivia\n\nAndy's Random Trivia Questions\nQuestion: Question\nAnswer: Answer\nNext Question\n© 2025 Andy's Trivia App. All rights reserved.\n\n"
+E        +  where "\n\n\n\n\n \nPlay Trivia\n\n\n\nHome\nAll Cards\nAll Sets\nUsers\nPlay Trivia\n\nAndy's Random Trivia Questions\nQuestion: Question\nAnswer: Answer\nNext Question\n© 2025 Andy's Trivia App. All rights reserved.\n\n" = get_text()
+E        +    where get_text = <!DOCTYPE html>\n\n<html lang="en">\n<head>\n<meta charset="utf-8"/>\n<meta content="width=device-width, initial-scale=1.0"...p><a href="/play">Next Question</a></p>\n<footer>© 2025 Andy's Trivia App. All rights reserved.</footer>\n</body>\n</html>.get_text
+
+tests/my_test.py:61: AssertionError
+_______________________________ test_create_card _______________________________
+
+client = <starlette.testclient.TestClient object at 0x7cb87a0aa1b0>
+
+    def test_create_card(client):
+        # Add a sample set for the card to belong to
+        set_data = {"name": "New Test Set", "user_id": 1}  # Removed explicit id to let it auto-generate
+        response = client.post("/sets/add", json=set_data)
+        assert response.status_code == 200
+        set_json = response.json()
+        assert set_json["name"] == "New Test Set"
+        set_id = set_json["id"]
+    
+        # Post our card data and save the response
+        new_card_data = {"front": "What is the capital of France?", "back": "Paris", "set_id": set_id}
+        response = client.post("/card/add", json=new_card_data)
+    
+        # Ensure a '200 OK' status code
+        assert response.status_code == 200
+    
+        card_json = response.json()
+    
+        # Ensure the card data is correct
+        assert card_json["front"] == "What is the capital of France?"
+        assert card_json["back"] == "Paris"
+        assert "id" in card_json
+    
+        card_id = card_json["id"]
+    
+        # Test the /cards/{card_id} endpoint
+        response_card_page = client.get(f"/cards/{card_id}")
+        assert response_card_page.status_code == 200
+        soup_card = BeautifulSoup(response_card_page.text, "html.parser")
+>       assert "What is the capital of France?" in soup_card.get_text()
+E       assert 'What is the capital of France?' in "\n\n\n\n\n \nAndy's Trivia Questions\n\n\n\nHome\nAll Cards\nAll Sets\nUsers\nPlay Trivia\n\nAndy's Trivia Questions\nNo cards available.\n© 2025 Andy's Trivia App. All rights reserved.\n\n"
+E        +  where "\n\n\n\n\n \nAndy's Trivia Questions\n\n\n\nHome\nAll Cards\nAll Sets\nUsers\nPlay Trivia\n\nAndy's Trivia Questions\nNo cards available.\n© 2025 Andy's Trivia App. All rights reserved.\n\n" = get_text()
+E        +    where get_text = <!DOCTYPE html>\n\n<html lang="en">\n<head>\n<meta charset="utf-8"/>\n<meta content="width=device-width, initial-scale=1.0"...estions</h1>\n<p>No cards available.</p>\n<footer>© 2025 Andy's Trivia App. All rights reserved.</footer>\n</body>\n</html>.get_text
+
+tests/my_test.py:136: AssertionError
+=========================== short test summary info ============================
+FAILED tests/my_test.py::test_read_main - assert 'Flashcard' in "\n\n\n\n\n \...
+FAILED tests/my_test.py::test_get_play - assert "Andre's Random Trivia Questi...
+FAILED tests/my_test.py::test_create_card - assert 'What is the capital of Fr...
+========================= 3 failed, 4 passed in 0.94s ==========================
