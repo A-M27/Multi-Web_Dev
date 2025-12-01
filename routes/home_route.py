@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Request, Depends
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from ..auth import get_current_user
-from ..db.models import User
+from auth import get_current_user
+from db.models import User
 from typing import Optional
 
 router = APIRouter()

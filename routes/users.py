@@ -2,9 +2,9 @@ from fastapi import APIRouter, Request, Depends, HTTPException, Form, Cookie
 from fastapi.responses import HTMLResponse, RedirectResponse, Response
 from fastapi.templating import Jinja2Templates
 from sqlmodel import select, Session
-from ..db.session import get_session
-from ..db.models import User
-from ..auth import get_current_user
+from db.session import get_session
+from db.models import User
+from auth import get_current_user
 from typing import Optional
 
 router = APIRouter(prefix="/users")

@@ -4,13 +4,12 @@ from fastapi import WebSocket, WebSocketDisconnect, Cookie
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, RedirectResponse
 from contextlib import asynccontextmanager
-from .db.session import create_db_and_tables, engine
-from .routes.cards import router as cards_router
-from .routes.sets import router as sets_router
-from .routes.users import router as users_router
-from .routes.home_route import router as home_router
-from .routes.scores import router as scores_router
-from .db.models import User, Set, Card, User
+from db.session import create_db_and_tables, engine
+from routes.cards import router as cards_router
+from routes.sets import router as sets_router
+from routes.users import router as users_router
+from routes.home_route import router as home_router
+from db.models import User, Set, Card, User
 from sqlmodel import Session, select
 from pydantic import BaseModel
 from typing import Optional, List
@@ -145,5 +144,5 @@ app.include_router(cards_router)
 app.include_router(sets_router)
 app.include_router(users_router)
 app.include_router(home_router)
-app.include_router(scores_router)
+
 
